@@ -2,6 +2,8 @@
 
 In this repo one can find code for training and infering intent classification
 that is presented as _shallow-and-wide Convolutional Neural Network_ https://arxiv.org/abs/1408.5882.
+
+
 Also this repo contains pre-trained model for intent classification on SNIPS dataset
 https://github.com/snipsco/nlu-benchmark/tree/master/2017-06-custom-intent-engines
 
