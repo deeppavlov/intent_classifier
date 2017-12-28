@@ -5,6 +5,15 @@ that is presented as _shallow-and-wide Convolutional Neural Network_ https://arx
 Also this repo contains pre-trained model for intent classification on SNIPS dataset
 https://github.com/snipsco/nlu-benchmark/tree/master/2017-06-custom-intent-engines
 
+SNIPS dataset considers the following intents:
+-AddToPlaylist
+-BookRestaurant
+-GetWeather
+-PlayMusic
+-RateBook
+-SearchCreativeWork
+-SearchScreeningEvent
+
 ### How to use
 
 First of all, one have to download this repo:
