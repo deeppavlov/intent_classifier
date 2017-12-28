@@ -26,7 +26,7 @@ SNIPS dataset considers the following intents:
 
 ### How to use
 
-First of all, one have to download this repo: 
+First of all, one have to download this repo:
 
 ```
 git clone https://github.com/deepmipt/intent_classifier.git
