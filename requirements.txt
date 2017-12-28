@@ -5,3 +5,4 @@ tensorflow
 gensim
 sklearn
 h5py
+tqdm
