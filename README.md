@@ -72,6 +72,8 @@ The next step is to install requirements:
 pip install -r requirements.txt
 ```
 
+The file with the dataset "intent_full_data.csv" should be presented in the exact following form:
+
 | request                                           | 	AddToPlaylist | BookRestaurant |	GetWeather	| PlayMusic	| RateBook	| SearchCreativeWork |	SearchScreeningEvent | 
 |-------------------------------------------------- |:---------------:|:--------------:|:--------------:|:---------:|:---------:|:------------------:|:---------------------:|
 | Add another song to the Cita RomГЎntica playli... | 1               | 0              | 0              |0          |0          |0                   |0                      |
