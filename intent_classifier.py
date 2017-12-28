@@ -10,7 +10,11 @@ from multiclass import KerasMulticlassModel
 
 def infer(phrase):
     global preprocessor, classes, model
-    predictions = model.infer(preprocessor.infer([phrase])[0])
+    try:
+        predictions = model.infer(preprocessor.infer([phrase])[0])
+    except Exception:
+        print('olololo', file=sys.stderr)
+        return 0, 'error'
     return np.max(predictions), classes[np.argmax(predictions)]
 
 
@@ -25,7 +29,6 @@ opt["classes"] = classes
 
 model = KerasMulticlassModel(opt)
 
-print("\nPlease, enter sentence")
 for query in sys.stdin:
     print(infer(query))
 

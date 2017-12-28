@@ -40,14 +40,14 @@ class Dataset(object):
         self.classes = classes
         if fields_to_merge is not None:
             if merged_field is not None:
-                print("Merging fields <<{}>> to new field <<{}>>".format(fields_to_merge, merged_field))
+                # print("Merging fields <<{}>> to new field <<{}>>".format(fields_to_merge, merged_field))
                 self._merge_data(fields_to_merge=fields_to_merge.split(' '), merged_field=merged_field)
             else:
                 raise IOError("Given fields to merge BUT not given name of merged field")
 
         if field_to_split is not None:
             if splitted_fields is not None:
-                print("Splitting field <<{}>> to new fields <<{}>>".format(field_to_split, splitted_fields))
+                # print("Splitting field <<{}>> to new fields <<{}>>".format(field_to_split, splitted_fields))
                 self._split_data(field_to_split=field_to_split,
                                  splitted_fields=splitted_fields.split(" "),
                                  splitting_proportions=[float(s) for s in splitting_proportions.split(" ")])

@@ -10,7 +10,7 @@
   "lear_rate": 0.1,
   "lear_rate_decay": 0.1,
   "loss": "binary_crossentropy",
-  "fasttext_model": "/home/dilyara/data/data_files/embeddings/dstc2_fasttext_model_100.bin",
+  "fasttext_model": "./reddit_fasttext_model.bin",
   "text_size": 15,
   "coef_reg_cnn": 1e-4,
   "coef_reg_den": 1e-4,

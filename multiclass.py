@@ -76,7 +76,8 @@ class KerasMulticlassModel(object):
                 self.fasttext_model = EmbeddingInferableModel(embedding_fname=self.opt['fasttext_model'],
                                                               embedding_dim=self.opt['embedding_size'])
             else:
-                raise IOError("Error: FastText model file does not exist")
+                self.fasttext_model = EmbeddingInferableModel(embedding_dim=self.opt['embedding_size'],
+                                                              embedding_url='http://lnsigo.mipt.ru/export/intent/reddit_fasttext_model.tar.gz')
         else:
             raise IOError("Error: FastText model file path is not given")
 
@@ -164,7 +165,7 @@ class KerasMulticlassModel(object):
         valid_x = self.texts2vec(valid_x)
         valid_y = labels2onehot(valid_y, classes=self.classes)
 
-        print('\n____Training over {} samples____\n\n'.format(n_train_samples))
+        # print('\n____Training over {} samples____\n\n'.format(n_train_samples))
 
         while epochs_done < self.opt['epochs']:
             batch_gen = dataset.batch_generator(batch_size=self.opt['batch_size'],
@@ -189,13 +190,13 @@ class KerasMulticlassModel(object):
                                 mode='valid')
                     if valid_metrics_values[0] > val_loss:
                         val_increase += 1
-                        print("__Validation impatience {} out of {}".format(
-                            val_increase, self.opt['val_patience']))
+                        # print("__Validation impatience {} out of {}".format(
+                        #     val_increase, self.opt['val_patience']))
                         if val_increase == self.opt['val_patience']:
-                            print("___Stop training: validation is out of patience___")
+                            # print("___Stop training: validation is out of patience___")
                             break
                     val_loss = valid_metrics_values[0]
-            print('epochs_done: {}'.format(epochs_done))
+            # print('epochs_done: {}'.format(epochs_done))
 
         self.save()
 
@@ -326,7 +327,7 @@ class KerasMulticlassModel(object):
         Returns:
             compiled model with given network and learning parameters
         """
-        print('[ Initializing model from scratch ]')
+        # print('[ Initializing model from scratch ]')
 
         model_func = getattr(self, model_name, None)
         if callable(model_func):
@@ -392,9 +393,9 @@ class KerasMulticlassModel(object):
             model with loaded weights and network parameters from files
             but compiled with given learning parameters
         """
-        print('___Initializing model from saved___'
-              '\nModel weights file is %s.h5'
-              '\nNetwork parameters are from %s_opt.json' % (fname, fname))
+        # print('___Initializing model from saved___'
+        #       '\nModel weights file is %s.h5'
+        #       '\nNetwork parameters are from %s_opt.json' % (fname, fname))
 
         fname = self.model_path_.name
         opt_fname = str(fname) + '_opt.json'
@@ -415,7 +416,7 @@ class KerasMulticlassModel(object):
         else:
             raise AttributeError("Model {} is not defined".format(model_name))
 
-        print("Loading wights from `{}`".format(fname + '.h5'))
+        # print("Loading wights from `{}`".format(fname + '.h5'))
         model.load_weights(weights_path)
 
         optimizer_func = getattr(keras.optimizers, optimizer_name, None)
@@ -469,7 +470,7 @@ class KerasMulticlassModel(object):
 
         opt_path = Path.joinpath(self.model_path_, opt_fname)
         weights_path = Path.joinpath(self.model_path_, weights_fname)
-        print("[ saving model: {} ]".format(str(opt_path)))
+        # print("[ saving model: {} ]".format(str(opt_path)))
         self.model.save_weights(weights_path)
 
         with open(opt_path, 'w') as outfile:

@@ -19,10 +19,11 @@ from pathlib import Path
 
 from gensim.models.wrappers.fasttext import FastText
 
+from utils import download_untar
 
 class EmbeddingInferableModel(object):
 
-    def __init__(self, embedding_fname, embedding_dim, embedding_url=None,  *args, **kwargs):
+    def __init__(self, embedding_dim, embedding_fname=None, embedding_url=None,  *args, **kwargs):
         """
         Method initialize the class according to given parameters.
         Args:
@@ -89,10 +90,8 @@ class EmbeddingInferableModel(object):
                 raise RuntimeError('No pretrained fasttext model provided')
             embedding_fname = Path(fasttext_model_file).name
             try:
-                print('Trying to download a pretrained fasttext model from repository')
-                url = urllib.parse.urljoin(emb_path, embedding_fname)
-                urllib.request.urlretrieve(url, fasttext_model_file)
-                print('Downloaded a fasttext model')
+                download_path = './'
+                download_untar(embedding_url, download_path)
             except Exception as e:
                 raise RuntimeError('Looks like the `EMBEDDINGS_URL` variable is set incorrectly', e)
         self.model = FastText.load_fasttext_format(fasttext_model_file)
