@@ -7,19 +7,19 @@ https://github.com/snipsco/nlu-benchmark/tree/master/2017-06-custom-intent-engin
 
 SNIPS dataset considers the following intents:
 
--AddToPlaylist
+- AddToPlaylist
 
--BookRestaurant
+- BookRestaurant
 
--GetWeather
+- GetWeather
 
--PlayMusic
+- PlayMusic
 
--RateBook
+- RateBook
 
--SearchCreativeWork
+- SearchCreativeWork
 
--SearchScreeningEvent
+- SearchScreeningEvent
 
 
 ### How to use
