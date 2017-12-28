@@ -1,0 +1,7 @@
+numpy
+nltk
+keras
+tensorflow
+gensim
+sklearn
+h5py
