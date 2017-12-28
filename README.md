@@ -6,13 +6,21 @@ Also this repo contains pre-trained model for intent classification on SNIPS dat
 https://github.com/snipsco/nlu-benchmark/tree/master/2017-06-custom-intent-engines
 
 SNIPS dataset considers the following intents:
+
 -AddToPlaylist
+
 -BookRestaurant
+
 -GetWeather
+
 -PlayMusic
+
 -RateBook
+
 -SearchCreativeWork
+
 -SearchScreeningEvent
+
 
 ### How to use
 
