@@ -22,6 +22,7 @@ from dataset import Dataset
 from multiclass import KerasMulticlassModel
 
 
+# Initializing Tokenizer class that can split words and punctuation by space
 preprocessor = NLTKTokenizer()
 
 comment_name = "request"
@@ -29,32 +30,9 @@ path_to_data = "/home/dilyara/data/data_files/snips"
 train_data = pd.read_csv(Path(path_to_data).joinpath("intent_full_data.csv"), sep=',')
 print(train_data.head())
 
-
-# comment_name = "comment_text"
-# path_to_data = "/home/dilyara/data/data_files/Kaggle_Toxic"
-# train_data = pd.read_csv(Path(path_to_data).joinpath("train_data_tokenized.csv"), sep=',')
-# print(train_data.head())
-#
-# test_data = pd.read_csv(Path(path_to_data).joinpath("test_data_tokenized.csv"), sep=',')
-# print(test_data.head())
-#
-# token_train_comments = preprocessor.infer(train_data.loc[:, "comment_text"].values)
-# train_data.loc[:, "comment_text"] = token_train_comments
-# train_data.to_csv(Path(path_to_data).joinpath("train_data_tokenized_.csv"), index=False)
-#
-
-# values = {'id': 0, 'comment_text': "no comment"}
-# test_data.fillna(value=values, inplace=True)
-#
-# token_test_comments = preprocessor.infer(test_data.loc[220000:, "comment_text"].values)
-# test_data.loc[220000:, "comment_text"] = token_test_comments
-# test_data.to_csv(Path(path_to_data).joinpath("test_data_tokenized_.csv"), index=False)
-
-
 with open("./config.json", "r") as f:
     opt = json.load(f)
 
-# classes = np.array(list(train_data.columns[2:]))
 classes = np.array(['AddToPlaylist', 'BookRestaurant', 'GetWeather',
                     'PlayMusic', 'RateBook', 'SearchCreativeWork', 'SearchScreeningEvent'])
 opt["classes"] = classes

@@ -24,7 +24,7 @@ SNIPS dataset considers the following intents:
 - SearchScreeningEvent
 
 
-### How to use
+### How to infer
 
 First of all, one have to download this repo:
 
@@ -55,6 +55,33 @@ Example:
 >I want you to add 'I love you, baby' to my playlist
 >(0.99991322, 'AddToPlaylist')
 ```
+
+### How to train
+
+First of all, one have to download this repo:
+
+```
+git clone https://github.com/deepmipt/intent_classifier.git
+
+cd intent_classifier
+```
+
+The next step is to install requirements:
+
+```
+pip install -r requirements.txt
+```
+
+| request                                           | 	AddToPlaylist | BookRestaurant |	GetWeather	| PlayMusic	| RateBook	| SearchCreativeWork |	SearchScreeningEvent | 
+|-------------------------------------------------- |:---------------:|:--------------:|:--------------:|:---------:|:---------:|:------------------:|:---------------------:|
+| Add another song to the Cita RomГЎntica playli... | 1               | 0              | 0              |0          |0          |0                   |0                      |
+| add clem burke in my playlist Pre-Party R&B Jams  | 1               | 0              | 0              |0          |0          |0                   |0                      |
+| Add Live from Aragon Ballroom to Trapeo           | 1               | 0              | 0              |0          |0          |0                   |0                      |
+| add Unite and Win to my night out                 | 1               | 0              | 0              |0          |0          |0                   |0                      |
+| Add track to my Digster Future Hits               | 1               | 0              | 0              |0          |0          |0                   |0                      ||
+
+
+
 
 ### References
 
