@@ -1,5 +1,5 @@
 {
-  "model_path": "./cnn_model_0",
+  "model_path": "./snips_pretrained/cnn_model",
   "kernel_sizes_cnn": "1 2 3",
   "filters_cnn": 256,
   "embedding_size": 100,

@@ -1,46 +1,37 @@
-# Copyright 2017 Neural Networks and Deep Learning lab, MIPT
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+#!/usr/bin/env python3
 
+import sys
 import pandas as pd
 import numpy as np
 from pathlib import Path
 import json
 
-from preprocessing import NLTKTokenizer
-from dataset import Dataset
-from multiclass import KerasMulticlassModel
+from intent_model.preprocessing import NLTKTokenizer
+from intent_model.dataset import Dataset
+from intent_model.multiclass import KerasMulticlassModel
 
-
+config_file = sys.argv[1]
+data_file = sys.argv[2]
 
 # Reading full data
 comment_name = "request"
-path_to_data = "./"
-train_data = pd.read_csv(Path(path_to_data).joinpath("intent_full_data.csv"), sep=',')
+train_data = pd.read_csv(Path(data_file), sep=',')
 print(train_data.head())
 
 # Tokenization that splits words and punctuation by space
 preprocessor = NLTKTokenizer()
 train_data.loc[:, comment_name] = preprocessor.infer(train_data.loc[:, comment_name].values)
 
-# Reading parameters of model from json
-with open("./config.json", "r") as f:
+# Reading parameters of intent_model from json
+with open(config_file, "r") as f:
     opt = json.load(f)
 
 # Initializing classes from dataset
-classes = np.array(['AddToPlaylist', 'BookRestaurant', 'GetWeather',
-                    'PlayMusic', 'RateBook', 'SearchCreativeWork', 'SearchScreeningEvent'])
-opt["classes"] = classes
+columns = list(train_data.columns)
+columns.remove(comment_name)
+classes = np.array(columns)
+opt["classes"] = " ".join(list(classes))
+print(classes)
 
 # Constructing data
 data_dict = dict()
@@ -53,10 +44,10 @@ data_dict["train"] = train_pairs
 dataset = Dataset(data=data_dict, seed=42, classes=classes,
                   field_to_split="train", splitted_fields="train valid", splitting_proportions="0.9 0.1")
 
-# Initilizing model with given parameters
-print("Initializing model")
+# Initilizing intent_model with given parameters
+print("Initializing intent_model")
 model = KerasMulticlassModel(opt)
 
-# Training model on the given dataset
-print("Training model")
+# Training intent_model on the given dataset
+print("Training intent_model")
 model.train(dataset=dataset)

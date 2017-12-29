@@ -3,6 +3,7 @@ nltk
 keras
 tensorflow
 gensim
+pandas
 sklearn
 h5py
 tqdm

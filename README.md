@@ -45,7 +45,7 @@ pip install -r requirements.txt
 Now one is able to infer pre-trained model:
 
 ```
-./intent_classifier.py
+./intent_classifier.py ./snips_pretrained/snips_config.json
 ```
 
 The script loads pre-trained model, if necessary downloads pre-trained fastText embedding model [2],
@@ -53,38 +53,30 @@ and then it is ready to predict class and probability of given phrase to belong 
 
 Example:
 ```
-./intent_classifier.py
+./intent_classifier.py ./snips_pretrained/snips_config.json
 >I want you to add 'I love you, baby' to my playlist
->(0.99991322, 'AddToPlaylist')
+>(0.99986315, 'AddToPlaylist')
 ```
 
-### How to train
+### How to train on your own data
 
-The repo contains  script `train.py` for training classifier on SNIPS dataset.  
+The repo contains  script `train.py` for training multilabel classifier.  
+Training data file should be presented in the following `data.csv` form:
 
-One can download SNIPS dataset using the following command:
+| request      |class_0|class_1|class_2|class_3| ...|
+|------------- |:-----:|:-----:|:-----:|:-----:|:--:|
+| text_0       | 1     | 0     | 0     |0      |... |
+| text_1       | 0     | 0     | 1     |0      |... |
+| text_2       | 0     | 1     | 0     |0      |... |
+| text_3       | 1     | 0     | 0     |0      |... |
+| ...          | ...   | ...   | ...   |...    |... ||
+
+Then one is ready to run `train.py` that includes reading data, tokenization, constructing data, 
+building dataset, initializing and training model with given parameters on dataset from `data.csv`:
 
 ```
-git clone https://github.com/snipsco/nlu-benchmark.git
-
+./train.py config.json data.csv 
 ```
-
-Then one can launch python script `data_snips.py` to build data from 
-https://github.com/snipsco/nlu-benchmark/tree/master/2017-06-custom-intent-engines
-
-```
-python data_snips.py
-```
-
-Finally, data file `intent_full_data.csv` should be presented in the following form:
-
-| request                                           | 	AddToPlaylist | BookRestaurant |	GetWeather	| PlayMusic	| RateBook	| SearchCreativeWork |	SearchScreeningEvent | 
-|-------------------------------------------------- |:---------------:|:--------------:|:--------------:|:---------:|:---------:|:------------------:|:---------------------:|
-| Add another song to the Cita RomГЎntica playli... | 1               | 0              | 0              |0          |0          |0                   |0                      |
-| add clem burke in my playlist Pre-Party R&B Jams  | 1               | 0              | 0              |0          |0          |0                   |0                      |
-| Add Live from Aragon Ballroom to Trapeo           | 1               | 0              | 0              |0          |0          |0                   |0                      |
-| add Unite and Win to my night out                 | 1               | 0              | 0              |0          |0          |0                   |0                      |
-| Add track to my Digster Future Hits               | 1               | 0              | 0              |0          |0          |0                   |0                      ||
 
 The model will be trained using parameters from `config.json` file. 
 There is a description of several parameters:
@@ -93,6 +85,8 @@ There is a description of several parameters:
 For example, if `config.json` contains `"model_path": "./cnn_model"`, 
 then configuration parameters for the trained model will be saved to `./cnn_model/cnn_model_opt.json` 
 and weights of the model will be saved to `./cnn_model/cnn_model.h5`.
+
+- Parameter `model_from_saved` means whether to load pre-trained model
 
 - Parameter `lear_metrics` is a string that can include either metrics from `keras.metrics` 
 or custom metrics from the file `metrics.py` (for example, `fmeasure`).
@@ -112,22 +106,15 @@ also it is possible to write  own model.
 
 - All other parameters refer to learning and network configuration.
 
-Now one is ready to run `train.py` that includes reading data, tokenization, constructing data, 
-building dataset, initializing and training model with given parameters.
-
-```
-python train.py
-```
-
 ### How to infer
 
 Infering can be done in two ways:
 ```
-python infer.py
+./infer.py config.json
 ```
 or
 ```
-./intent_classifier.py
+./intent_classifier.py config.json
 ```
 
 The first one runs `infer.py` file that contains reading parameters from `config.json` file, initializing tokenizer,

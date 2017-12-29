@@ -104,4 +104,4 @@ ENV/
 
 intent_full_data.csv
 
-reddit_fasttext_mode.bin
+reddit_fasttext_model.bin

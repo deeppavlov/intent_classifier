@@ -13,13 +13,12 @@
 # limitations under the License.
 
 
-import urllib.request
 import numpy as np
 from pathlib import Path
 
 from gensim.models.wrappers.fasttext import FastText
 
-from utils import download_untar
+from intent_model.utils import download_untar
 
 class EmbeddingInferableModel(object):
 
@@ -81,13 +80,13 @@ class EmbeddingInferableModel(object):
         """
 
         if not embedding_fname:
-            raise RuntimeError('No pretrained fasttext model provided')
+            raise RuntimeError('No pretrained fasttext intent_model provided')
         fasttext_model_file = embedding_fname
 
         if not Path(fasttext_model_file).is_file():
             emb_path = embedding_url
             if not emb_path:
-                raise RuntimeError('No pretrained fasttext model provided')
+                raise RuntimeError('No pretrained fasttext intent_model provided')
             embedding_fname = Path(fasttext_model_file).name
             try:
                 download_path = './'

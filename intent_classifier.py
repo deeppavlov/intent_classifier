@@ -4,31 +4,38 @@ import sys
 import numpy as np
 import json
 
-from preprocessing import NLTKTokenizer
-from multiclass import KerasMulticlassModel
+from intent_model.preprocessing import NLTKTokenizer
+from intent_model.multiclass import KerasMulticlassModel
 
+
+config_file = sys.argv[1]
 
 def infer(phrase):
     global preprocessor, classes, model
     try:
         predictions = model.infer(preprocessor.infer(phrase))
     except Exception:
-        print('olololo', file=sys.stderr)
+        print('Error', file=sys.stderr)
         return 0, 'error'
     return np.max(predictions), classes[np.argmax(predictions)]
 
 
+# Initializing preprocessor
 preprocessor = NLTKTokenizer()
 
-with open("./config.json", "r") as f:
+# Reading parameters
+with open(config_file, "r") as f:
     opt = json.load(f)
 
-classes = np.array(['AddToPlaylist', 'BookRestaurant', 'GetWeather',
-                    'PlayMusic', 'RateBook', 'SearchCreativeWork', 'SearchScreeningEvent'])
-opt["classes"] = classes
-opt["model_from_saved"] = True
 
+# Infering is possible only for saved intent_model
+opt['model_from_saved'] = True
+
+# Initializing intent_model
 model = KerasMulticlassModel(opt)
+
+# Initializing classes
+classes = model.classes
 
 for query in sys.stdin:
     print(infer(query))

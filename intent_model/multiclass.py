@@ -18,24 +18,21 @@ import copy
 from pathlib import Path
 import numpy as np
 
-from keras import backend as K
-from keras.models import Model
-from keras.layers import Dense, Input
 import keras.metrics
 import keras.optimizers
 import tensorflow as tf
 from keras.backend.tensorflow_backend import set_session
 from keras.models import Model
-from keras.layers import Dense, Input, concatenate, Activation, Embedding
+from keras.layers import Dense, Input, concatenate, Activation
 from keras.layers.pooling import GlobalMaxPooling1D, MaxPooling1D
 from keras.layers.convolutional import Conv1D
-from keras.layers.core import Dropout, Reshape
+from keras.layers.core import Dropout
 from keras.layers.normalization import BatchNormalization
 from keras.regularizers import l2
 
-from embedding_inferable import EmbeddingInferableModel
-import metrics as metrics_file
-from utils import labels2onehot, log_metrics
+from intent_model.embedding_inferable import EmbeddingInferableModel
+from intent_model import metrics as metrics_file
+from intent_model.utils import labels2onehot, log_metrics
 
 config = tf.ConfigProto()
 config.gpu_options.allow_growth = True
@@ -45,12 +42,12 @@ set_session(tf.Session(config=config))
 
 class KerasMulticlassModel(object):
     """
-    Class builds keras model
+    Class builds keras intent_model
     """
 
     def __init__(self, opt, *args, **kwargs):
         """
-        Method initializes model using parameters from opt
+        Method initializes intent_model using parameters from opt
         Args:
             opt: dictionary of parameters
             *args:
@@ -60,10 +57,6 @@ class KerasMulticlassModel(object):
 
         self.model_path_ = Path(self.opt["model_path"])
 
-        self.classes = np.array(self.opt['classes'])
-        self.opt.pop('classes', None)
-
-        self.n_classes = self.classes.shape[0]
         self.confident_threshold = self.opt['confident_threshold']
         if 'add_metrics' in self.opt.keys():
             self.add_metrics = self.opt['add_metrics'].split(' ')
@@ -79,7 +72,7 @@ class KerasMulticlassModel(object):
                 self.fasttext_model = EmbeddingInferableModel(embedding_dim=self.opt['embedding_size'],
                                                               embedding_url='http://lnsigo.mipt.ru/export/intent/reddit_fasttext_model.tar.gz')
         else:
-            raise IOError("Error: FastText model file path is not given")
+            raise IOError("Error: FastText intent_model file path is not given")
 
         if self.opt['model_from_saved']:
             self.model = self.load(model_name=self.opt['model_name'],
@@ -91,6 +84,8 @@ class KerasMulticlassModel(object):
                                    metrics_names=self.opt['lear_metrics'],
                                    add_metrics_file=metrics_file)
         else:
+            self.classes = np.array(self.opt['classes'].split(" "))
+            self.n_classes = self.classes.shape[0]
             self.model = self.init_model_from_scratch(model_name=self.opt['model_name'],
                                                       optimizer_name=self.opt['optimizer'],
                                                       lr=self.opt['lear_rate'],
@@ -125,7 +120,7 @@ class KerasMulticlassModel(object):
 
     def train_on_batch(self, batch):
         """
-        Method trains the model on the given batch
+        Method trains the intent_model on the given batch
         Args:
             batch - list of tuples (preprocessed text, labels)
 
@@ -141,7 +136,7 @@ class KerasMulticlassModel(object):
 
     def train(self, dataset, *args, **kwargs):
         """
-        Method trains the model using batches and validation
+        Method trains the intent_model using batches and validation
         Args:
             dataset: instance of class Dataset
 
@@ -220,12 +215,12 @@ class KerasMulticlassModel(object):
 
     def cnn_model(self, params):
         """
-        Method builds uncompiled model of shallow-and-wide CNN
+        Method builds uncompiled intent_model of shallow-and-wide CNN
         Args:
             params: disctionary of parameters for NN
 
         Returns:
-            Uncompiled model
+            Uncompiled intent_model
         """
         if type(self.opt['kernel_sizes_cnn']) is str:
             self.opt['kernel_sizes_cnn'] = [int(x) for x in
@@ -261,12 +256,12 @@ class KerasMulticlassModel(object):
 
     def dcnn_model(self, params):
         """
-        Method builds uncompiled model of deep CNN
+        Method builds uncompiled intent_model of deep CNN
         Args:
             params: disctionary of parameters for NN
 
         Returns:
-            Uncompiled model
+            Uncompiled intent_model
         """
         if type(self.opt['kernel_sizes_cnn']) is str:
             self.opt['kernel_sizes_cnn'] = [int(x) for x in
@@ -310,24 +305,24 @@ class KerasMulticlassModel(object):
                                 weighted_metrics=None,
                                 target_tensors=None):
         """
-        Method initializes model from scratch with given params
+        Method initializes intent_model from scratch with given params
         Args:
-            model_name: name of model function described as a method of this class
+            model_name: name of intent_model function described as a method of this class
             optimizer_name: name of optimizer from keras.optimizers
             lr: learning rate
             decay: learning rate decay
             loss_name: loss function name (from keras.losses)
             metrics_names: names of metrics (from keras.metrics) as one string
             add_metrics_file: file with additional metrics functions
-            loss_weights: optional parameter as in keras.model.compile
-            sample_weight_mode: optional parameter as in keras.model.compile
-            weighted_metrics: optional parameter as in keras.model.compile
-            target_tensors: optional parameter as in keras.model.compile
+            loss_weights: optional parameter as in keras.intent_model.compile
+            sample_weight_mode: optional parameter as in keras.intent_model.compile
+            weighted_metrics: optional parameter as in keras.intent_model.compile
+            target_tensors: optional parameter as in keras.intent_model.compile
 
         Returns:
-            compiled model with given network and learning parameters
+            compiled intent_model with given network and learning parameters
         """
-        # print('[ Initializing model from scratch ]')
+        # print('[ Initializing intent_model from scratch ]')
 
         model_func = getattr(self, model_name, None)
         if callable(model_func):
@@ -374,26 +369,26 @@ class KerasMulticlassModel(object):
              lr, decay, loss_name, metrics_names=None, add_metrics_file=None, loss_weights=None,
              sample_weight_mode=None, weighted_metrics=None, target_tensors=None):
         """
-        Method initiliazes model from saved params and weights
+        Method initiliazes intent_model from saved params and weights
         Args:
-            model_name: name of model function described as a method of this class
-            fname: path and first part of name of model
+            model_name: name of intent_model function described as a method of this class
+            fname: path and first part of name of intent_model
             optimizer_name: name of optimizer from keras.optimizers
             lr: learning rate
             decay: learning rate decay
             loss_name: loss function name (from keras.losses)
             metrics_names: names of metrics (from keras.metrics) as one string
             add_metrics_file: file with additional metrics functions
-            loss_weights: optional parameter as in keras.model.compile
-            sample_weight_mode: optional parameter as in keras.model.compile
-            weighted_metrics: optional parameter as in keras.model.compile
-            target_tensors: optional parameter as in keras.model.compile
+            loss_weights: optional parameter as in keras.intent_model.compile
+            sample_weight_mode: optional parameter as in keras.intent_model.compile
+            weighted_metrics: optional parameter as in keras.intent_model.compile
+            target_tensors: optional parameter as in keras.intent_model.compile
 
         Returns:
-            model with loaded weights and network parameters from files
+            intent_model with loaded weights and network parameters from files
             but compiled with given learning parameters
         """
-        # print('___Initializing model from saved___'
+        # print('___Initializing intent_model from saved___'
         #       '\nModel weights file is %s.h5'
         #       '\nNetwork parameters are from %s_opt.json' % (fname, fname))
 
@@ -408,7 +403,10 @@ class KerasMulticlassModel(object):
             with open(opt_path, 'r') as opt_file:
                 self.opt = json.load(opt_file)
         else:
-            raise IOError("Error: config file %s_opt.json of saved model does not exist" % fname)
+            raise IOError("Error: config file %s_opt.json of saved intent_model does not exist" % fname)
+
+        self.classes = np.array(self.opt['classes'].split(" "))
+        self.n_classes = self.classes.shape[0]
 
         model_func = getattr(self, model_name, None)
         if callable(model_func):
@@ -456,10 +454,10 @@ class KerasMulticlassModel(object):
 
     def save(self, fname=None):
         """
-        Method saves the model parameters into <<fname>>_opt.json (or <<model_file>>_opt.json)
-        and model weights into <<fname>>.h5 (or <<model_file>>.h5)
+        Method saves the intent_model parameters into <<fname>>_opt.json (or <<model_file>>_opt.json)
+        and intent_model weights into <<fname>>.h5 (or <<model_file>>.h5)
         Args:
-            fname: file_path to save model. If not explicitly given seld.opt["model_file"] will be used
+            fname: file_path to save intent_model. If not explicitly given seld.opt["model_file"] will be used
 
         Returns:
             nothing
@@ -470,7 +468,7 @@ class KerasMulticlassModel(object):
 
         opt_path = Path.joinpath(self.model_path_, opt_fname)
         weights_path = Path.joinpath(self.model_path_, weights_fname)
-        # print("[ saving model: {} ]".format(str(opt_path)))
+        # print("[ saving intent_model: {} ]".format(str(opt_path)))
         self.model.save_weights(weights_path)
 
         with open(opt_path, 'w') as outfile:

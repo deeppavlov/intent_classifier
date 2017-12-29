@@ -1,41 +1,30 @@
-# Copyright 2017 Neural Networks and Deep Learning lab, MIPT
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+#!/usr/bin/env python3
 
 import numpy as np
 import json
+import sys
 
-from preprocessing import NLTKTokenizer
-from multiclass import KerasMulticlassModel
+from intent_model.preprocessing import NLTKTokenizer
+from intent_model.multiclass import KerasMulticlassModel
 
+
+config_file = sys.argv[1]
 
 # Reading parameters
-with open("./config.json", "r") as f:
+with open(config_file, "r") as f:
     opt = json.load(f)
 
-# Initilizing classes
-classes = np.array(['AddToPlaylist', 'BookRestaurant', 'GetWeather',
-                    'PlayMusic', 'RateBook', 'SearchCreativeWork', 'SearchScreeningEvent'])
-opt["classes"] = classes
-
-# Infering is possible only for saved model
+# Infering is possible only for saved intent_model
 opt['model_from_saved'] = True
 
-# Initializing model
-print("Initializing model")
+# Initializing intent_model
+print("Initializing intent_model")
 model = KerasMulticlassModel(opt)
 
-# Initilizing preprocessor
+# Initializing classes
+classes = model.classes
+
+# Initializing preprocessor
 preprocessor = NLTKTokenizer()
 
 phrase = "I want you to add 'I love you, baby' to my playlist"
