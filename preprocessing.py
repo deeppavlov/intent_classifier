@@ -22,8 +22,12 @@ class NLTKTokenizer(object):
 
         tokenizer_ = getattr(nltk.tokenize, tokenizer, None)
         if callable(tokenizer_):
-            for text in batch:
-                tokenized_batch.append(" ".join(tokenizer_(text)))
+            if type(batch) == str:
+                tokenized_batch = " ".join(tokenizer_(batch))
+            else:
+                # list of str
+                for text in batch:
+                    tokenized_batch.append(" ".join(tokenizer_(text)))
             return tokenized_batch
         else:
             raise AttributeError("Tokenizer %s is not defined in nltk.tokenizer" % tokenizer)

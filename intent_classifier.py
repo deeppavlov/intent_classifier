@@ -11,7 +11,7 @@ from multiclass import KerasMulticlassModel
 def infer(phrase):
     global preprocessor, classes, model
     try:
-        predictions = model.infer(preprocessor.infer([phrase])[0])
+        predictions = model.infer(preprocessor.infer(phrase))
     except Exception:
         print('olololo', file=sys.stderr)
         return 0, 'error'
@@ -26,6 +26,7 @@ with open("./config.json", "r") as f:
 classes = np.array(['AddToPlaylist', 'BookRestaurant', 'GetWeather',
                     'PlayMusic', 'RateBook', 'SearchCreativeWork', 'SearchScreeningEvent'])
 opt["classes"] = classes
+opt["model_from_saved"] = True
 
 model = KerasMulticlassModel(opt)
 

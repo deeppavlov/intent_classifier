@@ -101,3 +101,7 @@ ENV/
 .mypy_cache/
 
 .idea/
+
+intent_full_data.csv
+
+reddit_fasttext_mode.bin

@@ -19,19 +19,29 @@ from preprocessing import NLTKTokenizer
 from multiclass import KerasMulticlassModel
 
 
-preprocessor = NLTKTokenizer()
-
+# Reading parameters
 with open("./config.json", "r") as f:
     opt = json.load(f)
 
+# Initilizing classes
 classes = np.array(['AddToPlaylist', 'BookRestaurant', 'GetWeather',
                     'PlayMusic', 'RateBook', 'SearchCreativeWork', 'SearchScreeningEvent'])
 opt["classes"] = classes
-print(opt)
 
+# Infering is possible only for saved model
+opt['model_from_saved'] = True
+
+# Initializing model
 print("Initializing model")
 model = KerasMulticlassModel(opt)
 
+# Initilizing preprocessor
+preprocessor = NLTKTokenizer()
+
 phrase = "I want you to add 'I love you, baby' to my playlist"
-predictions = model.infer(preprocessor.infer([phrase])[0])
+
+# Predicting
+predictions = model.infer(preprocessor.infer(phrase))
+
+# Result
 print(np.max(predictions), classes[np.argmax(predictions)])
