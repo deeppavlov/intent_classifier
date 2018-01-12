@@ -190,7 +190,9 @@ class KerasMulticlassModel(object):
                         if val_increase == self.opt['val_patience']:
                             # print("___Stop training: validation is out of patience___")
                             break
-                    val_loss = valid_metrics_values[0]
+                    else:
+                        val_increase = 0
+                        val_loss = valid_metrics_values[0]
             # print('epochs_done: {}'.format(epochs_done))
 
         self.save()
