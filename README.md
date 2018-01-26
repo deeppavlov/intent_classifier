@@ -22,6 +22,11 @@ SNIPS dataset considers the following intents:
 
 - SearchScreeningEvent
 
+![Test results on SNIPS dataset](dp_ir_snips.png)
+
+_Test results for other intent recognition services are from https://www.slideshare.net/KonstantinSavenkov/nlu-intent-detection-benchmark-by-intento-august-2017 _
+
+
 ### How to install
 
 First of all, one have to download this repo:
