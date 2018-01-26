@@ -24,7 +24,7 @@ SNIPS dataset considers the following intents:
 
 ![Test results on SNIPS dataset](dp_ir_snips.png)
 
-_Test results for other intent recognition services are from https://www.slideshare.net/KonstantinSavenkov/nlu-intent-detection-benchmark-by-intento-august-2017 _
+Test results for other intent recognition services are from https://www.slideshare.net/KonstantinSavenkov/nlu-intent-detection-benchmark-by-intento-august-2017
 
 
 ### How to install
