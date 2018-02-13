@@ -18,7 +18,7 @@ from pathlib import Path
 
 from gensim.models.wrappers.fasttext import FastText
 
-from intent_model.utils import download_untar
+from intent_model.utils import download
 
 class EmbeddingInferableModel(object):
 
@@ -80,17 +80,16 @@ class EmbeddingInferableModel(object):
         """
 
         if not embedding_fname:
-            raise RuntimeError('No pretrained fasttext intent_model provided')
+            raise RuntimeError('Please, provide path to model')
         fasttext_model_file = embedding_fname
 
         if not Path(fasttext_model_file).is_file():
             emb_path = embedding_url
             if not emb_path:
-                raise RuntimeError('No pretrained fasttext intent_model provided')
+                raise RuntimeError('Fasttext model file does not exist locally. URL does not contain  fasttext model file')
             embedding_fname = Path(fasttext_model_file).name
             try:
-                download_path = './'
-                download_untar(embedding_url, download_path)
+                download(dest_file_path=fasttext_model_file, source_url=embedding_url)
             except Exception as e:
                 raise RuntimeError('Looks like the `EMBEDDINGS_URL` variable is set incorrectly', e)
         self.model = FastText.load_fasttext_format(fasttext_model_file)

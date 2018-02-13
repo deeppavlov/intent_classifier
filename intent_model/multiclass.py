@@ -69,8 +69,9 @@ class KerasMulticlassModel(object):
                 self.fasttext_model = EmbeddingInferableModel(embedding_fname=self.opt['fasttext_model'],
                                                               embedding_dim=self.opt['embedding_size'])
             else:
-                self.fasttext_model = EmbeddingInferableModel(embedding_dim=self.opt['embedding_size'],
-                                                              embedding_url='http://lnsigo.mipt.ru/export/intent/reddit_fasttext_model.tar.gz')
+                self.fasttext_model = EmbeddingInferableModel(embedding_fname=self.opt['fasttext_model'],
+                                                              embedding_dim=self.opt['embedding_size'],
+                                                              embedding_url='http://lnsigo.mipt.ru/export/reddit_fasttext_model.bin')
         else:
             raise IOError("Error: FastText intent_model file path is not given")
 
