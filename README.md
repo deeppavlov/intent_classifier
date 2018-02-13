@@ -4,24 +4,14 @@ In this repo one can find code for training and infering intent classification
 that is presented as _shallow-and-wide Convolutional Neural Network_[1].
 
 
-Also this repo contains pre-trained model for intent classification on SNIPS dataset
-https://github.com/snipsco/nlu-benchmark/tree/master/2017-06-custom-intent-engines
+Also this repo contains pre-trained model for intent classification on [SNIPS dataset](https://github.com/snipsco/nlu-benchmark/tree/master/2017-06-custom-intent-engines)
 
-SNIPS dataset considers the following intents:
+SNIPS dataset considers the following intents: `AddToPlaylist`, `BookRestaurant`, `GetWeather`, `PlayMusic`, `RateBook`, `SearchCreativeWork`, `SearchScreeningEvent`.
 
-- AddToPlaylist
+![Test results on SNIPS dataset](dp_ir_snips.png)
 
-- BookRestaurant
+Test results for other intent recognition services are from https://www.slideshare.net/KonstantinSavenkov/nlu-intent-detection-benchmark-by-intento-august-2017
 
-- GetWeather
-
-- PlayMusic
-
-- RateBook
-
-- SearchCreativeWork
-
-- SearchScreeningEvent
 
 ### How to install
 
