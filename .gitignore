@@ -105,3 +105,5 @@ ENV/
 intent_full_data.csv
 
 reddit_fasttext_model.bin
+
+data13022018/
