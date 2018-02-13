@@ -1,5 +1,5 @@
 {
-  "model_path": "./cnn_model_1302",
+  "model_path": "./cnn_model_0",
   "kernel_sizes_cnn": "1 2 3",
   "filters_cnn": 256,
   "embedding_size": 100,
