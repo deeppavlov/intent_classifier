@@ -15,6 +15,7 @@
   "lear_rate_decay": 0.1,
   "loss": "binary_crossentropy",
   "fasttext_model": "./reddit_fasttext_model.bin",
+  "module": "fasttext",
   "text_size": 15,
   "coef_reg_cnn": 0.0001,
   "coef_reg_den": 0.0001,
