@@ -22,7 +22,7 @@ from intent_model.utils import download
 
 class EmbeddingInferableModel(object):
 
-    def __init__(self, embedding_dim, embedding_fname=None, embedding_url=None,  *args, **kwargs):
+    def __init__(self, embedding_dim, embedding_fname=None, embedding_url=None, module="fastText", *args, **kwargs):
         """
         Method initialize the class according to given parameters.
         Args:
@@ -35,6 +35,7 @@ class EmbeddingInferableModel(object):
         self.tok2emb = {}
         self.embedding_dim = embedding_dim
         self.model = None
+        self.module = module
         self.load(embedding_fname, embedding_url)
 
     def add_items(self, sentence_li):
@@ -52,7 +53,10 @@ class EmbeddingInferableModel(object):
             for tok in tokens:
                 if self.tok2emb.get(tok) is None:
                     try:
-                        self.tok2emb[tok] = self.model[tok]
+                        if self.module == "fasttext":
+                            self.tok2emb[tok] = self.fasttext_model[tok]
+                        else:
+                            self.tok2emb[tok] = self.fasttext_model.get_word_vector(tok)
                     except KeyError:
                         self.tok2emb[tok] = np.zeros(self.embedding_dim)
         return
@@ -92,7 +96,13 @@ class EmbeddingInferableModel(object):
                 download(dest_file_path=fasttext_model_file, source_url=embedding_url)
             except Exception as e:
                 raise RuntimeError('Looks like the `EMBEDDINGS_URL` variable is set incorrectly', e)
-        self.model = FastText.load_fasttext_format(fasttext_model_file)
+
+        if self.module == "fastText":
+            import fastText
+            self.fasttext_model = fastText.load_model(fasttext_model_file)
+        if self.module == "fasttext":
+            import fasttext
+            self.fasttext_model = fasttext.load_model(fasttext_model_file)
         return
 
     def infer(self, instance, *args, **kwargs):
