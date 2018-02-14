@@ -15,6 +15,7 @@
 
 import json
 import copy
+import sys
 from pathlib import Path
 import numpy as np
 
@@ -164,40 +165,43 @@ class KerasMulticlassModel(object):
         valid_x = self.texts2vec(valid_x)
         valid_y = labels2onehot(valid_y, classes=self.classes)
 
-        # print('\n____Training over {} samples____\n\n'.format(n_train_samples))
+        print('\n____Training over {} samples____\n\n'.format(n_train_samples))
 
-        while epochs_done < self.opt['epochs']:
-            batch_gen = dataset.batch_generator(batch_size=self.opt['batch_size'],
-                                                data_type='train')
-            for step, batch in enumerate(batch_gen):
-                metrics_values = self.train_on_batch(batch)
-                updates += 1
+        try:
+            while epochs_done < self.opt['epochs']:
+                batch_gen = dataset.batch_generator(batch_size=self.opt['batch_size'],
+                                                    data_type='train')
+                for step, batch in enumerate(batch_gen):
+                    metrics_values = self.train_on_batch(batch)
+                    updates += 1
 
-                if self.opt['verbose'] and step % 50 == 0:
-                    log_metrics(names=self.metrics_names,
-                                values=metrics_values,
-                                updates=updates,
-                                mode='train')
+                    if self.opt['verbose'] and step % 50 == 0:
+                        log_metrics(names=self.metrics_names,
+                                    values=metrics_values,
+                                    updates=updates,
+                                    mode='train')
 
-            epochs_done += 1
-            if epochs_done % self.opt['val_every_n_epochs'] == 0:
-                if 'valid' in dataset.data.keys():
-                    valid_metrics_values = self.model.test_on_batch(x=valid_x, y=valid_y)
+                epochs_done += 1
+                if epochs_done % self.opt['val_every_n_epochs'] == 0:
+                    if 'valid' in dataset.data.keys():
+                        valid_metrics_values = self.model.test_on_batch(x=valid_x, y=valid_y)
 
-                    log_metrics(names=self.metrics_names,
-                                values=valid_metrics_values,
-                                mode='valid')
-                    if valid_metrics_values[0] > val_loss:
-                        val_increase += 1
-                        # print("__Validation impatience {} out of {}".format(
-                        #     val_increase, self.opt['val_patience']))
-                        if val_increase == self.opt['val_patience']:
-                            # print("___Stop training: validation is out of patience___")
-                            break
-                    else:
-                        val_increase = 0
-                        val_loss = valid_metrics_values[0]
-            # print('epochs_done: {}'.format(epochs_done))
+                        log_metrics(names=self.metrics_names,
+                                    values=valid_metrics_values,
+                                    mode='valid')
+                        if valid_metrics_values[0] > val_loss:
+                            val_increase += 1
+                            print("__Validation impatience {} out of {}".format(
+                                val_increase, self.opt['val_patience']))
+                            if val_increase == self.opt['val_patience']:
+                                print("___Stop training: validation is out of patience___")
+                                break
+                        else:
+                            val_increase = 0
+                            val_loss = valid_metrics_values[0]
+                print('epochs_done: {}'.format(epochs_done))
+        except KeyboardInterrupt:
+            print('Interrupted', file=sys.stderr)
 
         self.save()
 
