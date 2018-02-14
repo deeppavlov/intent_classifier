@@ -139,6 +139,28 @@ class KerasMulticlassModel(object):
         metrics_values = self.model.train_on_batch(features, onehot_labels)
         return metrics_values
 
+    def infer_on_batch(self, batch, labels=None):
+        """
+        Method infers the model on the given batch
+        Args:
+            batch - list of texts
+            labels - list of labels
+
+        Returns:
+            loss and metrics values on the given batch, if labels are given
+            predictions, otherwise
+        """
+        texts = batch
+        if labels:
+            features = self.texts2vec(texts)
+            onehot_labels = labels2onehot(labels, classes=self.classes)
+            metrics_values = self.model.test_on_batch(features, onehot_labels.reshape(-1, self.n_classes))
+            return metrics_values
+        else:
+            features = self.texts2vec(texts)
+            predictions = self.model.predict(features)
+            return predictions
+
     def train(self, dataset, *args, **kwargs):
         """
         Method trains the intent_model using batches and validation
@@ -149,59 +171,53 @@ class KerasMulticlassModel(object):
 
         """
         updates = 0
+
         val_loss = 1e100
         val_increase = 0
         epochs_done = 0
 
         n_train_samples = len(dataset.data['train'])
-
-        valid_iter_all = dataset.iter_all(data_type='valid')
-        valid_x = []
-        valid_y = []
-        for valid_i, valid_sample in enumerate(valid_iter_all):
-            valid_x.append(valid_sample[0])
-            valid_y.append(valid_sample[1])
-
-        valid_x = self.texts2vec(valid_x)
-        valid_y = labels2onehot(valid_y, classes=self.classes)
-
         print('\n____Training over {} samples____\n\n'.format(n_train_samples))
 
-        try:
-            while epochs_done < self.opt['epochs']:
-                batch_gen = dataset.batch_generator(batch_size=self.opt['batch_size'],
-                                                    data_type='train')
-                for step, batch in enumerate(batch_gen):
-                    metrics_values = self.train_on_batch(batch)
-                    updates += 1
+        while epochs_done < self.opt['epochs']:
+            batch_gen = dataset.batch_generator(batch_size=self.opt['batch_size'],
+                                                data_type='train')
+            for step, batch in enumerate(batch_gen):
+                metrics_values = self.train_on_batch(batch)
+                updates += 1
 
-                    if self.opt['verbose'] and step % 50 == 0:
-                        log_metrics(names=self.metrics_names,
-                                    values=metrics_values,
-                                    updates=updates,
-                                    mode='train')
+                if self.opt['verbose'] and step % 500 == 0:
+                    log_metrics(names=self.metrics_names,
+                                values=metrics_values,
+                                updates=updates,
+                                mode='train')
 
-                epochs_done += 1
-                if epochs_done % self.opt['val_every_n_epochs'] == 0:
-                    if 'valid' in dataset.data.keys():
-                        valid_metrics_values = self.model.test_on_batch(x=valid_x, y=valid_y)
+            epochs_done += 1
+            if epochs_done % self.opt['val_every_n_epochs'] == 0:
+                if 'valid' in dataset.data.keys():
 
-                        log_metrics(names=self.metrics_names,
-                                    values=valid_metrics_values,
-                                    mode='valid')
-                        if valid_metrics_values[0] > val_loss:
-                            val_increase += 1
-                            print("__Validation impatience {} out of {}".format(
-                                val_increase, self.opt['val_patience']))
-                            if val_increase == self.opt['val_patience']:
-                                print("___Stop training: validation is out of patience___")
-                                break
-                        else:
-                            val_increase = 0
-                            val_loss = valid_metrics_values[0]
-                print('epochs_done: {}'.format(epochs_done))
-        except KeyboardInterrupt:
-            print('Interrupted', file=sys.stderr)
+                    valid_batch_gen = dataset.batch_generator(batch_size=self.opt['batch_size'],
+                                                              data_type='valid')
+                    valid_metrics_values = []
+                    for valid_step, valid_batch in enumerate(valid_batch_gen):
+                        valid_metrics_values.append(self.infer_on_batch(valid_batch[0],
+                                                                        labels=valid_batch[1]))
+
+                    valid_metrics_values = np.mean(np.asarray(valid_metrics_values), axis=0)
+                    log_metrics(names=self.metrics_names,
+                                values=valid_metrics_values,
+                                mode='valid')
+                    if valid_metrics_values[0] > val_loss:
+                        val_increase += 1
+                        print("__Validation impatience {} out of {}".format(
+                            val_increase, self.opt['val_patience']))
+                        if val_increase == self.opt['val_patience']:
+                            print("___Stop training: validation is out of patience___")
+                            break
+                    else:
+                        val_increase = 0
+                        val_loss = valid_metrics_values[0]
+            print('epochs_done: {}'.format(epochs_done))
 
         self.save()
 
@@ -215,12 +231,15 @@ class KerasMulticlassModel(object):
         Returns:
             Predictions for the given data
         """
+
         if type(data) is str:
-            features = self.texts2vec([data])
-            preds = self.model.predict_on_batch(features)[0]
+            preds = self.infer_on_batch([data])[0]
+            preds = np.array(preds)
+        elif type(data) is list:
+            preds = self.infer_on_batch(data)
+            preds = np.array(preds)
         else:
-            features = self.texts2vec(data)
-            preds = self.model.predict_on_batch(features)
+            raise ValueError("Not understand data type for inference")
         return preds
 
     def cnn_model(self, params):
