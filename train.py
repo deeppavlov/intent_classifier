@@ -18,9 +18,14 @@ comment_name = "request"
 train_data = pd.read_csv(Path(data_file), sep=',')
 print(train_data.head())
 
+values = {"istask": 0, "request": "пропущено"}
+train_data.fillna(values, inplace=True)
+
 # Tokenization that splits words and punctuation by space
 preprocessor = NLTKTokenizer()
-train_data.loc[:, comment_name] = preprocessor.infer(train_data.loc[:, comment_name].values)
+for k in range(3839):
+    inds = np.arange(k * 10000, min((k + 1) * 10000, train_data.shape[0]))
+    train_data.loc[inds, comment_name] = preprocessor.infer(train_data.loc[inds, comment_name].values)
 
 # Reading parameters of intent_model from json
 with open(config_file, "r") as f:
