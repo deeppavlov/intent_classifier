@@ -7,3 +7,4 @@ pandas
 sklearn
 h5py
 tqdm
+fasttext==0.8.3
