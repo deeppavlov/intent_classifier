@@ -1,3 +1,4 @@
+Cython==0.26.1
 numpy==1.14.1
 nltk==3.2.4
 keras==2.1.2
