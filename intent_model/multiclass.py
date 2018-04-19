@@ -497,7 +497,7 @@ class KerasMulticlassModel(object):
 
         opt_path = Path.joinpath(self.model_path_, opt_fname)
         weights_path = Path.joinpath(self.model_path_, weights_fname)
-        Path(opt_path).parent.mkdir(parents=True)
+        Path(opt_path).parent.mkdir(parents=True, exist_ok=True)
         # print("[ saving intent_model: {} ]".format(str(opt_path)))
         Path(opt_path).parent.mkdir(parents=True, exist_ok=True)
 
