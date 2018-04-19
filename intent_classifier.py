@@ -37,6 +37,7 @@ model = KerasMulticlassModel(opt)
 # Initializing classes
 classes = model.classes
 
+print("Model is ready! You now can enter requests.")
 for query in sys.stdin:
     print(infer(query))
 
