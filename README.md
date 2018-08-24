@@ -1,3 +1,7 @@
+# This repo is not currently supported as intent classifier became a part of DeepPavlov open-source library.
+
+Try it [here](http://docs.deeppavlov.ai/en/latest/components/classifiers.html).
+
 # Neural Networks for Intent Classifier
 
 In this repo one can find code for training and infering intent classification
